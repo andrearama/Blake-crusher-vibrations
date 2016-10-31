@@ -1,0 +1,33 @@
+% Mechanical parts lengths
+a0=0.015;
+b0=0.548;
+c0=0.391;
+d0=0.893;
+e0=1.065;
+l0=0.783;
+
+%Starting angles values
+theta0=3*pi/2;
+alpha0=3*pi/2;
+beta0=pi+0.2573;
+gamma0=pi-0.2617;
+delta0=pi+1.16;
+
+%In case that we want a different starting value of theta0:
+thetaspostato=1.6; %new theta0 value
+[theta0,alpha0,beta0,gamma0,delta0] = spostabeta(theta0,alpha0,beta0,gamma0,delta0,a0,b0,c0,d0,e0,l0,thetaspostato,0.001);
+
+% Mechanical parts values
+m1=625;
+m2=625;
+m3=1000;
+J0=684; % Flywheel moment of intertia
+J3=379; % Moving Jaw moment of intertia
+k0=4700000; % Stiffness constant
+r0=4000000; % Damping constant
+
+L0=a0*cos(theta0)+b0*cos(alpha0)+d0*cos(gamma0); %Spring position when no forces are applied to it
+
+C=400;  % Torque applied by the motor
+
+tp0=34; %starting velocity

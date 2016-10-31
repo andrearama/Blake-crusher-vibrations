@@ -1,0 +1,50 @@
+%Import the starting values
+run Data
+
+%The stiffness and the damping of the rocks crashed varies over time. For simplicity here we simply model them as sinusoidals
+k=@(t) k0*(1+0.9*sin(0.1*t));
+r=@(t) r0*(1+0.1*sin(0.1*t));
+
+%Find the preload necessary for the static equilibrium
+% DL0=0; %caso in cui il precarico è prestabilito
+DL= @(t,a,b,g,d) (C - 9.8*( m1*a0*cos(t) + m2*a0*(sin(a-t)*cos(b))/(sin(a-b)) +
+m3*l0*a0*(sin(a-t))/(sin(a-b))*(sin(g-b))/(sin(g-d))/e0*cos(d)))/(-a0*sin(t)-
+b0*sin(a)*a0*sin(b-t)/(b0*sin(a-b)) - sin(g)*a0*sin(a-t)*sin(d-b)/(sin(a-b)*sin(g-d)))/k0
+- (a0*cos(t)+ b0*cos(a)+ d0*cos(g)) + L0;
+
+DL0=DL(theta0,alpha0,beta0,gamma0,delta0);
+
+
+%Motion equation integration through Leapfrog method:
+tmax=600;
+h=0.0005;
+[theta,a,b,g,d,tempo,thp]= EQmoto(theta0,alpha0,beta0,gamma0,delta0,a0,b0,c0,d0,e0,l0,DL0,L0,m1,m2,m3,J0,J3,k,r,C,tp0,h,tmax);
+
+%results plot
+figure(1)
+plot(tempo,theta)
+figure(2)
+axis manual
+
+for i=1:1000:length(theta)
+ drawnow
+ cla
+ line([0,a0*cos(theta(i))],[0,a0*sin(theta(i))])
+ axis([-1 0.6 -1 1])
+
+line([a0*cos(theta(i)),a0*cos(theta(i))+b0*cos(a(i+1))],[a0*sin(theta(i)),a0*sin(theta(i)
+)+b0*sin(a(i+1))])
+ line([a0*cos(theta(i))+b0*cos(a(i))+c0*cos(b(i)-
+pi),a0*cos(theta(i))+b0*cos(a(i))+c0*cos(b(i)-
+pi)+c0*cos(b(i+1))],[a0*sin(theta(i))+b0*sin(a(i))+c0*sin(b(i)-
+pi),a0*sin(theta(i))+b0*sin(a(i))+c0*sin(b(i)-pi)+c0*sin(b(i+1))])
+
+line([a0*cos(theta(i))+b0*cos(a(i)),a0*cos(theta(i))+b0*cos(a(i))+d0*cos(g(i+1))],[a0*sin
+(theta(i))+b0*sin(a(i)),a0*sin(theta(i))+b0*sin(a(i))+d0*sin(g(i+1))])
+ line([a0*cos(theta(1))+b0*cos(a(1))+d0*cos(g(1))+e0*cos(d(1)-
+pi),a0*cos(theta(1))+b0*cos(a(1))+d0*cos(g(1))+e0*cos(d(1)-
+pi)+e0*cos(d(i+1))],[a0*sin(theta(1))+b0*sin(a(1))+d0*sin(g(1))+e0*sin(d(1)-
+pi),a0*sin(theta(1))+b0*sin(a(1))+d0*sin(g(1))+e0*sin(d(1)-pi)+e0*sin(d(i+1))])
+end
+figure(3)
+plot(tempo,thp)
